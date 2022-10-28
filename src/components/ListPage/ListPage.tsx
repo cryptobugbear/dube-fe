@@ -35,156 +35,16 @@ import {
 interface ListPageProps {}
 const movieData = [
   {
-    movie: "Shanghai",
-    genre: "Crime|Thriller",
-    country: "Russia",
+    movie: "Fridge",
+    genre: "Kitchen Appliance",
+    country: "Singapore",
   },
   {
-    movie: "Punk Syndrome, The (Kovasikajuttu)",
-    genre: "Documentary",
-    country: "Poland",
+    movie: "Aircon 2",
+    genre: "General Appliance",
+    country: "Thailand",
   },
-  {
-    movie: "Corridors of Blood",
-    genre: "Crime|Drama|Horror|Thriller",
-    country: "Germany",
-  },
-  {
-    movie: "Three Faces East",
-    genre: "Drama|Mystery|War",
-    country: "Russia",
-  },
-  {
-    movie: "Grave Secrets (Silent Screams)",
-    genre: "Horror",
-    country: "Russia",
-  },
-  {
-    movie: "Dead Outside, The",
-    genre: "Horror|Mystery|Thriller",
-    country: "Poland",
-  },
-  {
-    movie: "Cosmos",
-    genre: "Documentary",
-    country: "Russia",
-  },
-  {
-    movie: "UHF",
-    genre: "Comedy",
-    country: "Mexico",
-  },
-  {
-    movie: "Superweib, Das",
-    genre: "Comedy",
-    country: "Poland",
-  },
-  {
-    movie: "It's Good to Be Alive",
-    genre: "Drama",
-    country: "Belarus",
-  },
-  {
-    movie: "Last Action Hero",
-    genre: "Action|Adventure|Comedy|Fantasy",
-    country: "Russia",
-  },
-  {
-    movie:
-      "Nibelungen: Kriemhild's Revenge, Die (Die Nibelungen: Kriemhilds Rache)",
-    genre: "Adventure|Drama|Fantasy",
-    country: "Russia",
-  },
-  {
-    movie: "Roller Boogie",
-    genre: "Drama",
-    country: "Brazil",
-  },
-  {
-    movie: "Amore (L'Amore)",
-    genre: "Drama",
-    country: "Poland",
-  },
-  {
-    movie: "Dust of Time, The",
-    genre: "Drama",
-    country: "Poland",
-  },
-  {
-    movie: "Far Side of the Moon, The (Face cachée de la lune, La)",
-    genre: "Drama",
-    country: "Brazil",
-  },
-  {
-    movie: "Take Care of Your Scarf, Tatiana (Pidä huivista kiinni, Tatjana)",
-    genre: "Comedy",
-    country: "Poland",
-  },
-  {
-    movie: "Trail Beyond, The",
-    genre: "Action|Adventure|Western",
-    country: "Russia",
-  },
-  {
-    movie: "Mood Indigo (L'écume des jours)",
-    genre: "Drama|Fantasy",
-    country: "Russia",
-  },
-  {
-    movie: "Alpha and Omega",
-    genre: "Adventure|Animation|Children|Comedy|Romance",
-    country: "France",
-  },
-  {
-    movie: "Battleship Potemkin",
-    genre: "Drama|War",
-    country: "United Kingdom",
-  },
-  {
-    movie: "Rites of May, The (Itim) ",
-    genre: "Drama|Horror|Thriller",
-    country: "Brazil",
-  },
-  {
-    movie: "Black Waters of Echo's Pond, The",
-    genre: "Fantasy|Horror|Thriller",
-    country: "France",
-  },
-  {
-    movie: "Speed",
-    genre: "Action|Romance|Thriller",
-    country: "Brazil",
-  },
-  {
-    movie: "Ladybird Ladybird",
-    genre: "Drama",
-    country: "Poland",
-  },
-  {
-    movie: "War, Inc.",
-    genre: "Comedy|Crime|Thriller",
-    country: "Brazil",
-  },
-  {
-    movie: "Company of Heroes",
-    genre: "Action|War",
-    country: "United States",
-  },
-  {
-    movie: "Secret Glory, The",
-    genre: "Documentary",
-    country: "Poland",
-  },
-  {
-    movie: "Three Musketeers, The",
-    genre: "Action|Adventure|Romance",
-    country: "France",
-  },
-  {
-    movie: "Secrets of the Heart (Secretos del Corazón)",
-    genre: "Drama",
-    country: "Japan",
-  },
+  
 ];
 const castData = [
   {
