@@ -1,6 +1,5 @@
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import styles from "./ListPage.module.css";
 import {
   Avatar,
   AvatarSize,
@@ -11,7 +10,6 @@ import {
   FCLLayout,
   FlexBox,
   FlexBoxDirection,
-  ShellBar,
   StandardListItem,
   Label,
   List,
@@ -20,18 +18,10 @@ import {
   Toolbar,
   ToolbarSpacer,
   ToolbarDesign,
-  Bar,
   DynamicPage,
-  DynamicPageHeader,
   DynamicPageTitle,
-  BreadcrumbsItem,
   Badge,
-  ResponsivePopover,
-  FormItem,
-  Form,
-  FormGroup,
-  Input,
-} from "@ui5/webcomponents-react"; // loads ui5-button wrapped in a ui5-webcomponents-react component
+} from "@ui5/webcomponents-react";
 interface ListPageProps {}
 const movieData = [
   {
@@ -55,78 +45,7 @@ const castData = [
     name: "Essie Gadson",
     gender: "Female",
   },
-  {
-    name: "Claresta Greger",
-    gender: "Female",
-  },
-  {
-    name: "Susanne Pinson",
-    gender: "Female",
-  },
-  {
-    name: "Gardener Cutford",
-    gender: "Male",
-  },
-  {
-    name: "Red Swyer-Sexey",
-    gender: "Male",
-  },
-  {
-    name: "Alyson Bachellier",
-    gender: "Female",
-  },
-  {
-    name: "Amata Penke",
-    gender: "Female",
-  },
-  {
-    name: "Ancell Aprahamian",
-    gender: "Male",
-  },
-  {
-    name: "Kimmy Sworne",
-    gender: "Female",
-  },
-  {
-    name: "Liam Umpleby",
-    gender: "Male",
-  },
-  {
-    name: "Caleb Trathen",
-    gender: "Male",
-  },
-  {
-    name: "Starlin Kibard",
-    gender: "Female",
-  },
-  {
-    name: "Keefe Brammall",
-    gender: "Male",
-  },
-  {
-    name: "Terrill Reeme",
-    gender: "Male",
-  },
-  {
-    name: "Gerianne Maciejak",
-    gender: "Female",
-  },
-  {
-    name: "Wilhelmine Cutmare",
-    gender: "Female",
-  },
-  {
-    name: "Rodie Breukelman",
-    gender: "Female",
-  },
-  {
-    name: "Eduard Berk",
-    gender: "Male",
-  },
-  {
-    name: "Phil Koppens",
-    gender: "Female",
-  },
+  
 ];
 
 const defaultData = { movie: "string", genre: "string", country: "string" };
@@ -186,7 +105,10 @@ const ListPage: FC<ListPageProps> = () => {
                 </Button>
 
                 <Button design="Attention">Scan</Button>
-                <Button design="Emphasized">Login!</Button>
+                <Button design="Emphasized"                   
+                onClick={() => {
+                    navigate("https://dube.auth.ap-southeast-1.amazoncognito.com/login?response_type=token&client_id=55ae5bvha428nr80ccre3dl4au&redirect_uri=https://savearbo.xyz");
+                  }}>Login!</Button>
               </>
             }
             header={<Title>Dube </Title>}
