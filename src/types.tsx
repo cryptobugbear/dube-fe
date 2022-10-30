@@ -2,6 +2,9 @@ import { AssetTypes, WorkOrderStatuses, WorkOrderTypes } from "./enums";
 
 export interface Member {
   id: string;
+  name: string;
+  orgId: string;
+  cognitoId: string;
 }
 
 export interface Organization {
@@ -32,5 +35,5 @@ export interface Asset {
   audit: Audit;
   workOrders: WorkOrder[];
   type: AssetTypes;
-  image: string;
+  imageS3: string;
 }

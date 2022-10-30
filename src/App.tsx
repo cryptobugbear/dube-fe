@@ -1,18 +1,35 @@
-import React from "react";
-// import logo from "./logo.svg";
-import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import ListPage from "./components/ListPage/ListPage";
-import AddInventory from "./components/AddInventory/AddInventory";
+import ListPage from "components/ListPage";
+import AddInventory from "components/AddInventory";
+import {
+  Button,
+  DynamicPage,
+  DynamicPageTitle,
+  Title,
+} from "@ui5/webcomponents-react";
+
 function App() {
   return (
     <Router>
-      <div className="App">
+      <DynamicPage
+        showHideHeaderButton={false}
+        headerTitle={
+          <DynamicPageTitle
+            actions={
+              <>
+                <Button design="Attention">Scan</Button>
+                <Button design="Emphasized">Login</Button>
+              </>
+            }
+            header={<Title>Dube</Title>}
+          />
+        }
+      >
         <Routes>
           <Route path="/" element={<ListPage />} />
           <Route path="/add" element={<AddInventory />} />
         </Routes>
-      </div>
+      </DynamicPage>
     </Router>
   );
 }

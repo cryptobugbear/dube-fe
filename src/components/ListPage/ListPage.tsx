@@ -18,8 +18,6 @@ import {
   Toolbar,
   ToolbarSpacer,
   ToolbarDesign,
-  DynamicPage,
-  DynamicPageTitle,
 } from "@ui5/webcomponents-react"; // loads ui5-button wrapped in a ui5-webcomponents-react component
 import { Asset, WorkOrder } from "types";
 import { AssetTypes, WorkOrderStatuses, WorkOrderTypes } from "enums";
@@ -39,7 +37,7 @@ const assets: Asset[] = [
       createdBy: "test",
     },
     id: "1",
-    image: "selocation",
+    imageS3: "selocation",
     name: "Test Appliance",
     workOrders: [
       {
@@ -88,128 +86,108 @@ const ListPage: FC<ListPageProps> = () => {
   }, [asset, workOrder]);
 
   return (
-    <DynamicPage
-      showHideHeaderButton={false}
-      headerTitle={
-        <DynamicPageTitle
-          actions={
-            <>
-              <Button
-                id={"openPopoverBtn"}
-                onClick={() => {
-                  navigate("/add");
-                }}
-                design="Attention"
+    <FlexibleColumnLayout
+      layout={layout}
+      startColumn={
+        <>
+          <List
+            header={
+              <Toolbar design={ToolbarDesign.Solid}>
+                <Title>Assets</Title>
+                <ToolbarSpacer />
+                <Button onClick={() => navigate("/add")}>Add</Button>
+              </Toolbar>
+            }
+            onItemClick={(e) => setAssetId(e.detail.item.dataset.aid)}
+          >
+            {assets.map((a) => (
+              <StandardListItem
+                key={a.id}
+                description={a.type}
+                data-aid={a.id}
+                selected={assetId === a.id}
               >
-                Add
-              </Button>
-
-              <Button design="Attention">Scan</Button>
-              <Button design="Emphasized">Login!</Button>
-            </>
-          }
-          header={<Title>Dube</Title>}
-        />
+                {a.name}
+              </StandardListItem>
+            ))}
+          </List>
+        </>
       }
-    >
-      <FlexibleColumnLayout
-        layout={layout}
-        startColumn={
+      midColumn={
+        asset && (
           <>
+            <Toolbar design={ToolbarDesign.Solid}>
+              <Title>{asset.name}</Title>
+              <ToolbarSpacer />
+              <Button
+                icon="decline"
+                design={ButtonDesign.Transparent}
+                onClick={() => setAssetId(null)}
+              />
+            </Toolbar>
+            <Toolbar style={{ height: "200px" }}>
+              <Avatar
+                icon="video"
+                size={AvatarSize.XL}
+                style={{ marginLeft: "12px" }}
+              >
+                {asset.imageS3 && <img src={asset.imageS3} alt="" />}
+              </Avatar>
+              <FlexBox
+                direction={FlexBoxDirection.Column}
+                style={{ marginLeft: "6px" }}
+              >
+                <FlexBox>
+                  <Label>Name:</Label>
+                  <Text style={{ marginLeft: "2px" }}>{asset.name}</Text>
+                </FlexBox>
+                <FlexBox>
+                  <Label>Genre:</Label>
+                  <Text style={{ marginLeft: "2px" }}>
+                    {assetNames[asset.type]}
+                  </Text>
+                </FlexBox>
+              </FlexBox>
+            </Toolbar>
             <List
-              headerText="Assets"
-              onItemClick={(e) => setAssetId(e.detail.item.dataset.aid)}
+              headerText="Work Orders"
+              onItemClick={(e) => setWoId(e.detail.item.dataset.woid)}
             >
-              {assets.map((a) => (
+              {asset.workOrders.map((wo) => (
                 <StandardListItem
-                  key={a.id}
-                  description={a.type}
-                  data-aid={a.id}
-                  selected={assetId === a.id}
+                  key={wo.id}
+                  description={wo.description}
+                  data-woid={wo.id}
+                  selected={woId === wo.id}
                 >
-                  {a.name}
+                  {wo.name}
+                  <WorkOrderBadge workOrder={wo} />
                 </StandardListItem>
               ))}
             </List>
           </>
-        }
-        midColumn={
-          asset && (
-            <>
-              <Toolbar design={ToolbarDesign.Solid}>
-                <Title>{asset.name}</Title>
-                <ToolbarSpacer />
-                <Button
-                  icon="decline"
-                  design={ButtonDesign.Transparent}
-                  onClick={() => setAssetId(null)}
-                />
-              </Toolbar>
-              <Toolbar style={{ height: "200px" }}>
-                <Avatar
-                  icon="video"
-                  size={AvatarSize.XL}
-                  style={{ marginLeft: "12px" }}
-                >
-                  {asset.image && <img src={asset.image} alt="" />}
-                </Avatar>
-                <FlexBox
-                  direction={FlexBoxDirection.Column}
-                  style={{ marginLeft: "6px" }}
-                >
-                  <FlexBox>
-                    <Label>Name:</Label>
-                    <Text style={{ marginLeft: "2px" }}>{asset.name}</Text>
-                  </FlexBox>
-                  <FlexBox>
-                    <Label>Genre:</Label>
-                    <Text style={{ marginLeft: "2px" }}>
-                      {assetNames[asset.type]}
-                    </Text>
-                  </FlexBox>
-                </FlexBox>
-              </Toolbar>
-              <List
-                headerText="Work Orders"
-                onItemClick={(e) => setWoId(e.detail.item.dataset.woid)}
-              >
-                {asset.workOrders.map((wo) => (
-                  <StandardListItem
-                    key={wo.id}
-                    description={wo.description}
-                    data-woid={wo.id}
-                    selected={woId === wo.id}
-                  >
-                    {wo.name}
-                    <WorkOrderBadge workOrder={wo} />
-                  </StandardListItem>
-                ))}
-              </List>
-            </>
-          )
-        }
-        endColumn={
-          workOrder && (
-            <>
-              <Toolbar design={ToolbarDesign.Solid}>
-                <Title>{workOrder.name}</Title>
-                <WorkOrderBadge workOrder={workOrder} />
-                <ToolbarSpacer />
-                <Button
-                  icon="decline"
-                  design={ButtonDesign.Transparent}
-                  onClick={() => setWoId(null)}
-                />
-              </Toolbar>
-              <Card>
-                <Text style={{ padding: 16 }}>{workOrder.description}</Text>
-              </Card>
-            </>
-          )
-        }
-      />
-      <FlexibleColumnLayout />
-    </DynamicPage>
+        )
+      }
+      endColumn={
+        workOrder && (
+          <>
+            <Toolbar design={ToolbarDesign.Solid}>
+              <Title>{workOrder.name}</Title>
+              <WorkOrderBadge workOrder={workOrder} />
+              <ToolbarSpacer />
+              <Button
+                icon="decline"
+                design={ButtonDesign.Transparent}
+                onClick={() => setWoId(null)}
+              />
+            </Toolbar>
+            <Card>
+              <Text style={{ padding: 16 }}>{workOrder.description}</Text>
+            </Card>
+          </>
+        )
+      }
+    />
   );
 };
 
