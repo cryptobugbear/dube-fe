@@ -105,10 +105,7 @@ const ListPage: FC<ListPageProps> = () => {
                 </Button>
 
                 <Button design="Attention">Scan</Button>
-                <Button design="Emphasized"                   
-                onClick={() => {
-                    navigate("https://dube.auth.ap-southeast-1.amazoncognito.com/login?response_type=token&client_id=55ae5bvha428nr80ccre3dl4au&redirect_uri=https://savearbo.xyz");
-                  }}>Login!</Button>
+                <Button design="Emphasized">Login!</Button>
               </>
             }
             header={<Title>Dube </Title>}
