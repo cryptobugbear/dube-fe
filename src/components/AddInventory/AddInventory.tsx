@@ -1,119 +1,96 @@
 import {
-  DynamicPage,
-  DynamicPageTitle,
   Button,
   Title,
   Label,
-  Badge,
   Form,
-  FormGroup,
   FormItem,
   Input,
+  FlexBox,
+  RadioButton,
+  Toolbar,
+  ToolbarSpacer,
 } from "@ui5/webcomponents-react";
 import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { Asset } from "types";
+import { AssetTypes } from "enums";
+import useAssetTypeNames from "hooks/useAssetTypeNames";
+import "@ui5/webcomponents/dist/features/InputElementsFormSupport";
 
-import styles from "./AddInventory.module.css";
-interface Audit {
-  createdBy: Member;
-  createdAt: string;
-}
-interface Organization {
-  Id: string;
-  orgId: string;
-  name: string;
-  members: Array<Member>;
-}
-interface Member {
-  Id: string;
-  orgId: string;
-  cognitoId: string;
-  name: string;
-}
-interface WorkOrder {
-  Id: string;
-  name: string;
-  image: string;
-  description: string;
-  status: string;
-  type: string;
-  audit: Audit;
-}
 interface AddInventoryProps {}
-type Inputs = {
-  id: string;
-  name: string;
-  imageS3: string;
-  location: string;
-  type: string;
-  audit: Audit|'';
-  organization: Organization|'';
-  workOrders: Array<WorkOrder>|''; 
-};
+
+type AddInventoryPayload = Pick<
+  Asset,
+  "name" | "imageS3" | "location" | "type"
+>;
 
 const AddInventory: FC<AddInventoryProps> = () => {
-  let navigate = useNavigate();
-  
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = data => console.log(data);
+  const navigate = useNavigate();
+  const assetTypeNames = useAssetTypeNames();
 
-  return  (
-  <div className={styles.AddInventory}>
-    <DynamicPage
-      showHideHeaderButton={false}
-      headerTitle={
-        <DynamicPageTitle
-          actions={
-            <>
-              <Button
-                id={"openPopoverBtn"}
-                onClick={() => {
-                  navigate("/");
-                }}
-                design="Attention"
-              >
-                Home
-              </Button>
+  const [data, setData] = useState<AddInventoryPayload>({
+    name: "",
+    imageS3: "",
+    location: "",
+    type: AssetTypes.Appliances,
+  });
 
-              <Button design="Attention">Scan</Button>
-              <Button design="Emphasized">Login!</Button>
-            </>
-          }
-          header={<Title>Dube </Title>}
-          // subHeader={<Label>{quote}</Label>}
-        >
-          <Badge>Status: OK</Badge>
-        </DynamicPageTitle>
-      }
-    >
-      <Form
-        style={{
-          alignItems: 'center'
-        }}>
-          
+  return (
+    <>
+      <FlexBox alignItems="Center">
+        <Button style={{ marginRight: 16 }} onClick={() => navigate("/")}>
+          Back
+        </Button>
+        <Title>Add Inventory</Title>
+      </FlexBox>
+
+      <Form style={{ alignItems: "center" }} onSubmit={console.log}>
         <FormItem label="Name">
-          <Input defaultValue="test" {...register("name")} />
+          <Input
+            value={data.name}
+            onChange={(e) =>
+              setData((curr) => ({ ...curr, name: e.target.value }))
+            }
+          />
         </FormItem>
-        <FormGroup titleText="Inventory Information">
-          <FormItem label="Photo">
-            <Input {...register("imageS3", { required: true })}/>
-          </FormItem>
-          <FormItem label={<Label>Location</Label>}>
-            <Input {...register("location", { required: true })}/>
-          </FormItem>
-          </FormGroup>
+        <FormItem label="Photo">
+          <Input
+            value={data.imageS3}
+            onChange={(e) =>
+              setData((curr) => ({ ...curr, imageS3: e.target.value }))
+            }
+          />
+        </FormItem>
+        <FormItem label={<Label>Location</Label>}>
+          <Input
+            value={data.location}
+            onChange={(e) =>
+              setData((curr) => ({ ...curr, location: e.target.value }))
+            }
+          />
+        </FormItem>
+        <FormItem label={<Label>Asset Type</Label>}>
+          <FlexBox alignItems="Center">
+            {[AssetTypes.Appliances].map((type) => (
+              <RadioButton
+                key={type}
+                name="type"
+                text={assetTypeNames[type]}
+                value={AssetTypes.Appliances}
+                checked={type === data.type}
+                onChange={() => setData((curr) => ({ ...curr, type }))}
+              />
+            ))}
+          </FlexBox>
+        </FormItem>
+      </Form>
 
-        </Form>
-        <Button
-            icon="employee"
-            onClick={handleSubmit(onSubmit)}
-          >
-            Submit Inventory
-          </Button>
-    </DynamicPage>
-  </div>
-);
-    }
+      <Toolbar>
+        <ToolbarSpacer />
+        <Button onClick={() => console.log(data)}>Submit Inventory</Button>
+      </Toolbar>
+    </>
+  );
+};
 
 export default AddInventory;

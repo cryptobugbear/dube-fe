@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Avatar,
@@ -18,242 +18,176 @@ import {
   Toolbar,
   ToolbarSpacer,
   ToolbarDesign,
-  DynamicPage,
-  DynamicPageTitle,
-  Badge,
-} from "@ui5/webcomponents-react";
+} from "@ui5/webcomponents-react"; // loads ui5-button wrapped in a ui5-webcomponents-react component
+import { Asset, WorkOrder } from "types";
+import { AssetTypes, WorkOrderStatuses, WorkOrderTypes } from "enums";
+import useAssetTypeNames from "hooks/useAssetTypeNames";
+import WorkOrderBadge from "components/WorkOrderBadge";
+
+const assets: Asset[] = [
+  {
+    location: "sg",
+    organization: {
+      name: "testorg",
+      id: "1",
+      members: [],
+    },
+    audit: {
+      createdAt: "test",
+      createdBy: "test",
+    },
+    id: "1",
+    imageS3: "selocation",
+    name: "Test Appliance",
+    workOrders: [
+      {
+        id: "1",
+        name: "First Work Order",
+        image: "om1",
+        description:
+          "The Tale of the Bamboo Cutter is a monogatari containing elements of Japanese folklore. Written by an unknown author in the late 9th or early 10th century during the Heian period, it is considered the oldest surviving work in the monogatari form.",
+        type: WorkOrderTypes.Appliances,
+        status: WorkOrderStatuses.Closed,
+      },
+      {
+        id: "2",
+        name: "Second Work Order",
+        image: "om1",
+        description:
+          "You can take specific actions when users sign-in or sign-out by subscribing authentication events in your app. Please see our Hub Module Developer Guide for more information.",
+        type: WorkOrderTypes.Appliances,
+        status: WorkOrderStatuses.Open,
+      },
+    ],
+    type: AssetTypes.Appliances,
+  },
+];
+
 interface ListPageProps {}
-const movieData = [
-  {
-    movie: "Fridge",
-    genre: "Kitchen Appliance",
-    country: "Singapore",
-  },
-  {
-    movie: "Aircon 2",
-    genre: "General Appliance",
-    country: "Thailand",
-  },
-  
-];
-const castData = [
-  {
-    name: "Clywd Gimeno",
-    gender: "Male",
-  },
-  {
-    name: "Essie Gadson",
-    gender: "Female",
-  },
-  
-];
 
-const defaultData = { movie: "string", genre: "string", country: "string" };
-const defaultCastData = { name: "string", gender: "string" };
 const ListPage: FC<ListPageProps> = () => {
-  let navigate = useNavigate();
-  const [layout, setLayout] = useState(FCLLayout.OneColumn);
-  const [selectedMovie, setSelectedMovie] = useState(movieData[0]);
-  const [selectedCast, setSelectedCast] = useState(castData[0]);
-  const [quote, setQuote] = useState("");
+  const assetNames = useAssetTypeNames();
 
-  const getQuotes = () => {
-    const allQuotes = `https://gist.githubusercontent.com/camperbot/5a022b72e96c4c9585c32bf6a75f62d9/raw/e3c6895ce42069f0ee7e991229064f167fe8ccdc/quotes.json`;
-    fetch(allQuotes)
-      .then((res) => res.json())
-      .then((data) => {
-        let dataQuotes = data.quotes;
-        let randomNum = Math.floor(Math.random() * dataQuotes.length);
-        let randomQuote = data.quotes[randomNum];
-        setQuote(randomQuote.quote);
-      });
-  };
-  useEffect(() => {
-    // Update the document title using the browser API
-    getQuotes();
-  }, []);
-  const onStartColumnClick = (e: any) => {
-    setSelectedMovie(
-      movieData.find((item) => item["movie"] === e.detail.item.dataset.movie) ||
-        defaultData
-    );
-    setLayout(FCLLayout.TwoColumnsMidExpanded);
-  };
-  const onMiddleColumnClick = (e: any) => {
-    setSelectedCast(
-      castData.find((item) => item.name === e.detail.item.dataset.name) ||
-        defaultCastData
-    );
-    setLayout(FCLLayout.ThreeColumnsEndExpanded);
-  };
+  const navigate = useNavigate();
+
+  const [assetId, setAssetId] = useState<Asset["id"]>(null);
+  const [woId, setWoId] = useState<WorkOrder["id"]>(null);
+
+  const asset = useMemo(() => assets.find((a) => a.id === assetId), [assetId]);
+  const workOrder = useMemo(
+    () => asset && asset.workOrders.find((wo) => wo.id === woId),
+    [asset, woId]
+  );
+
+  const layout = useMemo(() => {
+    if (workOrder) return FCLLayout.ThreeColumnsEndExpanded;
+    if (asset) return FCLLayout.TwoColumnsMidExpanded;
+    return FCLLayout.OneColumn;
+  }, [asset, workOrder]);
+
   return (
-    <div>
-      <DynamicPage
-        showHideHeaderButton={false}
-        headerTitle={
-          <DynamicPageTitle
-            actions={
-              <>
-                <Button
-                  id={"openPopoverBtn"}
-                  onClick={() => {
-                    navigate("/add");
-                  }}
-                  design="Attention"
-                >
-                  Add
-                </Button>
-
-                <Button design="Attention">Scan</Button>
-                <Button design="Emphasized">Login!</Button>
-              </>
+    <FlexibleColumnLayout
+      layout={layout}
+      startColumn={
+        <>
+          <List
+            header={
+              <Toolbar design={ToolbarDesign.Solid}>
+                <Title>Assets</Title>
+                <ToolbarSpacer />
+                <Button onClick={() => navigate("/add")}>Add</Button>
+              </Toolbar>
             }
-            header={<Title>Dube </Title>}
-            subHeader={<Label>{quote}</Label>}
+            onItemClick={(e) => setAssetId(e.detail.item.dataset.aid)}
           >
-            <Badge>Status: OK</Badge>
-          </DynamicPageTitle>
-        }
-      >
-        <FlexibleColumnLayout
-          layout={layout}
-          startColumn={
-            <>
-              <List headerText="Assets" onItemClick={onStartColumnClick}>
-                {movieData.map((item) => (
-                  <StandardListItem
-                    description={item.genre}
-                    data-movie={item.movie}
-                  >
-                    {item.movie}
-                  </StandardListItem>
-                ))}
-              </List>
-            </>
-          }
-          midColumn={
-            <>
-              <Toolbar design={ToolbarDesign.Solid}>
-                <Title>{selectedMovie.movie}</Title>
-                <ToolbarSpacer />
-                <Button
-                  icon="decline"
-                  design={ButtonDesign.Transparent}
-                  onClick={() => {
-                    setLayout(FCLLayout.OneColumn);
-                  }}
-                />
-              </Toolbar>
-              <Toolbar
-                style={{
-                  height: "200px",
-                }}
+            {assets.map((a) => (
+              <StandardListItem
+                key={a.id}
+                description={a.type}
+                data-aid={a.id}
+                selected={assetId === a.id}
               >
-                <Avatar
-                  icon="video"
-                  size={AvatarSize.XL}
-                  style={{
-                    marginLeft: "12px",
-                  }}
-                />
-                <FlexBox
-                  direction={FlexBoxDirection.Column}
-                  style={{
-                    marginLeft: "6px",
-                  }}
-                >
-                  <FlexBox>
-                    <Label>Movie:</Label>
-                    <Text
-                      style={{
-                        marginLeft: "2px",
-                      }}
-                    >
-                      {selectedMovie.movie}
-                    </Text>
-                  </FlexBox>
-                  <FlexBox>
-                    <Label>Genre:</Label>
-                    <Text
-                      style={{
-                        marginLeft: "2px",
-                      }}
-                    >
-                      {selectedMovie.genre}
-                    </Text>
-                  </FlexBox>
-                  <FlexBox>
-                    <Label>Country:</Label>
-                    <Text
-                      style={{
-                        marginLeft: "2px",
-                      }}
-                    >
-                      {selectedMovie.country}
-                    </Text>
-                  </FlexBox>
+                {a.name}
+              </StandardListItem>
+            ))}
+          </List>
+        </>
+      }
+      midColumn={
+        asset && (
+          <>
+            <Toolbar design={ToolbarDesign.Solid}>
+              <Title>{asset.name}</Title>
+              <ToolbarSpacer />
+              <Button
+                icon="decline"
+                design={ButtonDesign.Transparent}
+                onClick={() => setAssetId(null)}
+              />
+            </Toolbar>
+            <Toolbar style={{ height: "200px" }}>
+              <Avatar
+                icon="video"
+                size={AvatarSize.XL}
+                style={{ marginLeft: "12px" }}
+              >
+                {asset.imageS3 && <img src={asset.imageS3} alt="" />}
+              </Avatar>
+              <FlexBox
+                direction={FlexBoxDirection.Column}
+                style={{ marginLeft: "6px" }}
+              >
+                <FlexBox>
+                  <Label>Name:</Label>
+                  <Text style={{ marginLeft: "2px" }}>{asset.name}</Text>
                 </FlexBox>
-              </Toolbar>
-              <List headerText="Cast" onItemClick={onMiddleColumnClick}>
-                {castData.map((item) => (
-                  <StandardListItem
-                    description={item.gender}
-                    data-name={item.name}
-                  >
-                    {item.name}
-                  </StandardListItem>
-                ))}
-              </List>
-            </>
-          }
-          endColumn={
-            <>
-              <Toolbar design={ToolbarDesign.Solid}>
-                <Title>{selectedCast.name}</Title>
-                <ToolbarSpacer />
-                <Button
-                  icon="decline"
-                  design={ButtonDesign.Transparent}
-                  onClick={() => {
-                    setLayout(FCLLayout.TwoColumnsMidExpanded);
-                  }}
-                />
-              </Toolbar>
-              <Card title={selectedCast.name}>
-                <div>
-                  <Text>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                    Duis aute irure dolor in reprehenderit in voluptate velit
-                    esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-                    occaecat cupidatat non proident, sunt in culpa qui officia
-                    deserunt mollit anim id est laborum. "Lorem ipsum dolor sit
-                    amet, consectetur adipiscing elit, sed do eiusmod tempor
-                    incididunt ut labore et dolore magna aliqua. Ut enim ad
-                    minim veniam, quis nostrud exercitation ullamco laboris nisi
-                    ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-                    reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-                    proident, sunt in culpa qui officia deserunt mollit anim id
-                    est laborum. "Lorem ipsum dolor sit amet, consectetur
-                    adipiscing elit, sed do eiusmod tempor incididunt ut labore
-                    et dolore magna aliqua. Ut enim ad minim veniam, quis
-                    nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                    commodo consequat. Duis aute irure dolor in reprehenderit in
-                    voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                    Excepteur sint occaecat cupidatat non proident, sunt in
-                    culpa qui officia deserunt mollit anim id est laborum.
+                <FlexBox>
+                  <Label>Genre:</Label>
+                  <Text style={{ marginLeft: "2px" }}>
+                    {assetNames[asset.type]}
                   </Text>
-                </div>
-              </Card>
-            </>
-          }
-        />
-        <FlexibleColumnLayout />
-      </DynamicPage>
-    </div>
+                </FlexBox>
+              </FlexBox>
+            </Toolbar>
+            <List
+              headerText="Work Orders"
+              onItemClick={(e) => setWoId(e.detail.item.dataset.woid)}
+            >
+              {asset.workOrders.map((wo) => (
+                <StandardListItem
+                  key={wo.id}
+                  description={wo.description}
+                  data-woid={wo.id}
+                  selected={woId === wo.id}
+                >
+                  {wo.name}
+                  <WorkOrderBadge workOrder={wo} />
+                </StandardListItem>
+              ))}
+            </List>
+          </>
+        )
+      }
+      endColumn={
+        workOrder && (
+          <>
+            <Toolbar design={ToolbarDesign.Solid}>
+              <Title>{workOrder.name}</Title>
+              <WorkOrderBadge workOrder={workOrder} />
+              <ToolbarSpacer />
+              <Button
+                icon="decline"
+                design={ButtonDesign.Transparent}
+                onClick={() => setWoId(null)}
+              />
+            </Toolbar>
+            <Card>
+              <Text style={{ padding: 16 }}>{workOrder.description}</Text>
+            </Card>
+          </>
+        )
+      }
+    />
   );
 };
 
